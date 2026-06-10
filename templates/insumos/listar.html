@@ -1,0 +1,94 @@
+{% extends "base.html" %}
+
+<script>
+    const tipoSelect = document.getElementById("tipo");
+    const valorInput = document.getElementById("valor_total");
+
+    function toggleValor() {
+        if (tipoSelect.value === "saida") {
+            valorInput.style.display = "block";
+        } else {
+            valorInput.style.display = "none";
+        }
+    }
+
+    // Executa ao carregar a página
+    toggleValor();
+
+    // Executa quando muda o select
+    tipoSelect.addEventListener("change", toggleValor);
+</script>
+
+{% block content %}
+
+    <h1>Cadastro de Insumos</h1>
+
+    <form method="POST">
+        <input type="text" name="nome" placeholder="Nome" required>
+        
+        <select name="unidade">
+            <option value="kg">Kg</option>
+            <option value="g">Gramas</option>
+            <option value="L">Litros</option>
+            <option value="un">Unidade</option>
+        </select>
+
+        <input type="number" step="0.01" name="estoque_minimo" placeholder="Estoque mínimo">
+
+        <button type="submit">Salvar</button>
+    </form>
+
+    <hr>
+
+    <h2>Lista de Insumos</h2>
+
+    <table border="1">
+        <tr>
+            <th>Nome</th>
+            <th>Unidade</th>
+            <th>Estoque Atual</th>
+            <th>Mínimo</th>
+        </tr>
+
+        {% for i in insumos %}
+        <tr>
+            <td>{{ i.nome }}</td>
+            <td>{{ i.unidade }}</td>
+            <td>{{ i.estoque_atual }}</td>
+            <td>{{ i.estoque_minimo }}</td>
+        </tr>
+        {% endfor %}
+    </table>
+
+    <hr>
+
+    <h2>Movimentar Estoque</h2>
+
+    <form method="POST" action="/insumos/movimentar">
+        
+        <select name="insumo_id">
+            {% for i in insumos %}
+            <option value="{{ i.id }}">{{ i.nome }}</option>
+            {% endfor %}
+        </select>
+
+        <select name="tipo" id="tipo">
+            <option value="entrada">Entrada</option>
+            <option value="saida">Saída</option>
+        </select>
+
+        <input type="number" step="0.01" name="quantidade" placeholder="Quantidade" required>
+
+        <input type="text" name="motivo" placeholder="Motivo (compra, ajuste, etc)">
+
+        <input type="number" step="0.01" name="valor_total" id="valor_total" placeholder="Valor da compra">
+
+        <button type="submit">Movimentar</button>
+
+    </form>
+
+    <a href="/insumos/historico">Ver Histórico</a>
+
+
+
+{% endblock %}
