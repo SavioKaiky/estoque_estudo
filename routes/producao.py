@@ -1,4 +1,4 @@
-from flask import Blueprint, render_template, request, redirect, url_for
+from flask import Blueprint, render_template, request, redirect, url_for, flash
 from models.produto import Produto
 from services.producao_service import produzir, saida_produto
  
@@ -8,7 +8,6 @@ producao_bp = Blueprint("producao", __name__, url_prefix="/producao")
  
 @producao_bp.route("/", methods=["GET", "POST"])
 def produzir_view():
-    """Exibe formulário de produção e processa o POST."""
     produtos = Produto.query.all()
  
     if request.method == "POST":
@@ -16,9 +15,14 @@ def produzir_view():
         quantidade = int(request.form.get("quantidade"))
  
         try:
-            produzir(produto_id, quantidade)
+            resultado = produzir(produto_id, quantidade)
+            flash(
+                f"Produção registrada! CMV: R$ {resultado['custo_total']:.2f} "
+                f"(R$ {resultado['custo_unitario']:.2f}/un)",
+                "success"
+            )
         except ValueError as e:
-            return str(e), 400
+            flash(str(e), "danger")
  
         return redirect(url_for("producao.produzir_view"))
  
@@ -27,7 +31,6 @@ def produzir_view():
  
 @producao_bp.route("/venda", methods=["GET", "POST"])
 def venda():
-    """Exibe formulário de venda e processa o POST."""
     produtos = Produto.query.all()
  
     if request.method == "POST":
@@ -36,8 +39,9 @@ def venda():
  
         try:
             saida_produto(produto_id, quantidade)
+            flash("Venda registrada com sucesso.", "success")
         except ValueError as e:
-            return str(e), 400
+            flash(str(e), "danger")
  
         return redirect(url_for("producao.venda"))
  
