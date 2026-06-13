@@ -2,19 +2,18 @@
 
 {% block content %}
 
-    <h1>Produção</h1>
+<h1>Produção</h1>
 
-    <form method="POST">
-        
-        <select name="produto_id">
-            {% for p in produtos %}
-            <option value="{{ p.id }}">{{ p.nome }}</option>
-            {% endfor %}
-        </select>
+<form method="POST">
+    <select name="produto_id">
+        {% for p in produtos %}
+        <option value="{{ p.id }}">{{ p.nome }}</option>
+        {% endfor %}
+    </select>
 
-        <input type="number" name="quantidade" placeholder="Quantidade" required>
+    <input type="number" name="quantidade" placeholder="Quantidade" required>
 
-        <button type="submit">Produzir</button>
-    </form>
+    <button type="submit">Produzir</button>
+</form>
 
 {% endblock %}

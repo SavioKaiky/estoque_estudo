@@ -2,26 +2,25 @@
 
 {% block content %}
 
-    <h1>Histórico de Movimentações</h1>
+<h1>Histórico de Movimentações</h1>
 
-    <table border="1">
-        <tr>
-            <th>Insumo</th>
-            <th>Tipo</th>
-            <th>Quantidade</th>
-            <th>Motivo</th>
-            <th>Data</th>
-        </tr>
-
-        {% for m in movs %}
-        <tr>
-            <td>{{ m.insumo.nome }}</td>
-            <td>{{ m.tipo }}</td>
-            <td>{{ m.quantidade }}</td>
-            <td>{{ m.motivo }}</td>
-            <td>{{ m.created_at }}</td>
-        </tr>
-        {% endfor %}
-    </table>
+<table>
+    <tr>
+        <th>Insumo</th>
+        <th>Tipo</th>
+        <th>Quantidade</th>
+        <th>Motivo</th>
+        <th>Data</th>
+    </tr>
+    {% for m in movs %}
+    <tr>
+        <td>{{ m.insumo.nome }}</td>
+        <td>{{ m.tipo }}</td>
+        <td>{{ m.quantidade }}</td>
+        <td>{{ m.motivo }}</td>
+        <td>{{ m.created_at.strftime('%d/%m/%Y %H:%M') }}</td>
+    </tr>
+    {% endfor %}
+</table>
 
 {% endblock %}
