@@ -1,41 +1,35 @@
 <!DOCTYPE html>
-<html>
+<html lang="pt-BR">
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Sistema de Estoque</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
 </head>
 <body>
 
 <h1>📦 Sistema de Estoque</h1>
 
 <nav>
-    <a href="/">Home</a> |
-    <a href="/insumos">Insumos</a> |
-    <a href="/produtos">Produtos</a> |
-    <a href="/producao">Produção</a> |
-    <a href="/producao/venda">Vendas</a> |
-    <a href="/insumos/historico">Histórico de Insumos</a>
+    <a href="/">🏠 Home</a>
+    <a href="/insumos">📥 Insumos</a>
+    <a href="/produtos">🍽️ Produtos</a>
+    <a href="/producao">🏭 Produção</a>
+    <a href="/producao/venda">💰 Vendas</a>
+    <a href="/insumos/historico">📊 Histórico</a>
 </nav>
-
-<hr>
  
 {% with messages = get_flashed_messages(with_categories=true) %}
     {% if messages %}
         {% for category, message in messages %}
-            <div style="
-                padding: 10px 14px;
-                margin-bottom: 10px;
-                border-radius: 4px;
-                background-color: {{ '#d4edda' if category == 'success' else '#f8d7da' }};
-                color: {{ '#155724' if category == 'success' else '#721c24' }};
-                border: 1px solid {{ '#c3e6cb' if category == 'success' else '#f5c6cb' }};
-            ">
-                {{ message }}
-            </div>
+            <div class="flash {{ category }}">{{ message }}</div>
         {% endfor %}
     {% endif %}
 {% endwith %}
  
 {% block content %}{% endblock %}
+ 
+{% block scripts %}{% endblock %}
  
 </body>
 </html>
