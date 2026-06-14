@@ -5,7 +5,7 @@ class LoteInsumo(db.Model):
     __tablename__ = "lotes_insumos"
 
     id = db.Column(db.Integer, primary_key=True)
-    insumo_id = db.Column(db.Integer, db.ForeignKey("insumos.id"))
+    insumo_id = db.Column(db.Integer, db.ForeignKey("insumo.id"))
     
     quantidade_inicial = db.Column(db.Float)
     quantidade_restante = db.Column(db.Float)

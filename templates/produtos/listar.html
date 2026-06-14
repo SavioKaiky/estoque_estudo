@@ -2,22 +2,23 @@
 
 {% block content %}
 
-    <h1>Produtos</h1>
+<h1>Produtos</h1>
 
-    <form method="POST">
-        <input type="text" name="nome" placeholder="Nome do produto" required>
-        <button type="submit">Salvar</button>
-    </form>
+<form method="POST">
+    <input type="text" name="nome" placeholder="Nome do produto" required>
+    <button type="submit">Salvar</button>
+</form>
 
-    <hr>
+<hr>
 
-    <ul>
-        {% for p in produtos %}
-            <li>
-                {{ p.nome }} 
-                | <a href="/produtos/{{ p.id }}/ficha">Ficha Técnica</a>
-            </li>
-        {% endfor %}
-    </ul>
+<ul>
+    {% for p in produtos %}
+    <li>
+        {{ p.nome }} — Estoque: {{ p.estoque_atual }}
+        &nbsp;|&nbsp;
+        <a href="/produtos/{{ p.id }}/ficha">Ficha Técnica</a>
+    </li>
+    {% endfor %}
+</ul>
 
 {% endblock %}
