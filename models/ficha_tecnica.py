@@ -5,7 +5,7 @@ class FichaTecnica(db.Model):
 
     id = db.Column(db.Integer, primary_key=True)
     produto_id = db.Column(db.Integer, db.ForeignKey("produtos.id"))
-    insumo_id = db.Column(db.Integer, db.ForeignKey("insumos.id"))
+    insumo_id = db.Column(db.Integer, db.ForeignKey("insumo.id"))
     quantidade = db.Column(db.Float)  # quanto usa por unidade
 
     produto = db.relationship("Produto")
