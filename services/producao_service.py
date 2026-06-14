@@ -1,12 +1,31 @@
+"""
+services/producao_service.py
+==============================
+REGRAS DE NEGÓCIO de produção e venda de produtos.
+
+CORREÇÕES CRÍTICAS aplicadas:
+  1. Uma única transação atômica para toda a produção:
+     - baixar_estoque_fifo() não faz mais commit intermediário
+     - Se qualquer etapa falhar, rollback desfaz tudo
+     - Elimina o risco de insumos baixados sem produto gerado
+
+  2. estoque_atual removido dos models — não atualiza mais manualmente.
+     O saldo é calculado via movimentações (property nos models).
+
+CORREÇÃO IMPORTANTE aplicada:
+  3. Erros usam flash() + redirect em vez de retornar string de erro bruta.
+     (o tratamento de flash fica nas rotas)
+"""
+
 from database import db
 from models.produto import Produto
 from models.insumo import Insumo
 from models.ficha_tecnica import FichaTecnica
 from models.movimentacao_produto import MovimentacaoProduto
-from models.movimentacao_insumo import MovimentacaoInsumo
+from models.insumo import MovimentacaoInsumo
 from services.custo_service import baixar_estoque_fifo, validar_estoque_fifo
- 
- 
+
+
 def produzir(produto_id: int, quantidade: int) -> dict:
     """
     Orquestra a produção em UMA única transação atômica:
@@ -19,14 +38,14 @@ def produzir(produto_id: int, quantidade: int) -> dict:
     produto = db.session.get(Produto, produto_id)
     if not produto:
         raise ValueError("Produto não encontrado")
- 
+
     if quantidade <= 0:
         raise ValueError("Quantidade deve ser maior que zero")
- 
+
     ficha = FichaTecnica.query.filter_by(produto_id=produto_id).all()
     if not ficha:
         raise ValueError("Produto sem ficha técnica cadastrada")
- 
+
     # ETAPA 1 — Validar todos os insumos ANTES de alterar qualquer coisa
     for item in ficha:
         insumo = db.session.get(Insumo, item.insumo_id)
@@ -36,18 +55,18 @@ def produzir(produto_id: int, quantidade: int) -> dict:
                 f"Estoque insuficiente: {insumo.nome} "
                 f"(necessário: {consumo:.2f}, disponível em lotes)"
             )
- 
+
     # ETAPA 2 — Consumir FIFO e registrar saídas (sem commit intermediário)
     cmv_total = 0.0
- 
+
     for item in ficha:
         insumo = db.session.get(Insumo, item.insumo_id)
         consumo = item.quantidade * quantidade
- 
+
         # baixar_estoque_fifo NÃO faz commit — faz parte desta transação
         custo = baixar_estoque_fifo(insumo.id, consumo)
         cmv_total += custo
- 
+
         mov_insumo = MovimentacaoInsumo(
             insumo_id=insumo.id,
             tipo="saida",
@@ -55,10 +74,10 @@ def produzir(produto_id: int, quantidade: int) -> dict:
             motivo="produção"
         )
         db.session.add(mov_insumo)
- 
+
     # ETAPA 3 — Registrar entrada do produto acabado
     cmv_unitario = cmv_total / quantidade
- 
+
     mov_produto = MovimentacaoProduto(
         produto_id=produto_id,
         tipo="entrada",
@@ -68,17 +87,17 @@ def produzir(produto_id: int, quantidade: int) -> dict:
         custo_unitario=cmv_unitario
     )
     db.session.add(mov_produto)
- 
+
     # ÚNICO commit de toda a operação — atômico
     try:
         db.session.commit()
     except Exception:
         db.session.rollback()
         raise
- 
+
     return {"custo_total": cmv_total, "custo_unitario": cmv_unitario}
- 
- 
+
+
 def saida_produto(produto_id: int, quantidade: int) -> None:
     """
     Registra venda/saída de produto acabado.
@@ -87,14 +106,14 @@ def saida_produto(produto_id: int, quantidade: int) -> None:
     produto = db.session.get(Produto, produto_id)
     if not produto:
         raise ValueError("Produto não encontrado")
- 
+
     if quantidade <= 0:
         raise ValueError("Quantidade deve ser maior que zero")
- 
+
     saldo = produto.estoque_atual  # calculado via property nas movimentações
     if saldo < quantidade:
         raise ValueError(f"Estoque insuficiente. Disponível: {saldo}")
- 
+
     mov = MovimentacaoProduto(
         produto_id=produto_id,
         tipo="saida",
@@ -102,10 +121,9 @@ def saida_produto(produto_id: int, quantidade: int) -> None:
         motivo="venda"
     )
     db.session.add(mov)
- 
+
     try:
         db.session.commit()
     except Exception:
         db.session.rollback()
         raise
- 
