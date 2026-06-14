@@ -11,3 +11,10 @@ class FichaTecnica(db.Model):
     produto = db.relationship("Produto")
     insumo = db.relationship("Insumo")
 
+    @property
+    def quantidade_em_gramas(self) -> float:
+        """
+        Converte a quantidade (salva em kg) para gramas na exibição.
+        Ex: 0.5 kg → 500.0 g
+        """
+        return self.quantidade * 1000

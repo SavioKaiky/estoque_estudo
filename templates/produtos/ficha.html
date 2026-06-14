@@ -11,7 +11,7 @@
         {% endfor %}
     </select>
 
-    <input type="number" step="0.01" name="quantidade" placeholder="Quantidade por unidade" required>
+    <input type="number" step="0.01" name="quantidade" placeholder="Quantidade em gramas (ex: 500)" required>
 
     <button type="submit">Adicionar</button>
 </form>
@@ -22,7 +22,7 @@
 
 <ul>
     {% for item in ficha %}
-    <li>{{ item.insumo.nome }} — {{ item.quantidade }} {{ item.insumo.unidade }}</li>
+    <li>{{ item.insumo.nome }} — {{ item.quantidade_em_gramas | int }}g</li>
     {% endfor %}
 </ul>
 
