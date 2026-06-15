@@ -160,3 +160,29 @@ ul li {
 ul li:last-child {
     border-bottom: none;
 }
+
+
+/* ---- Usuários ---- */
+.badge-ativo {
+    color: #155724;
+    font-weight: bold;
+}
+
+.badge-inativo {
+    color: #721c24;
+    font-weight: bold;
+}
+
+.btn-link {
+    background: none;
+    border: none;
+    color: #0066cc;
+    cursor: pointer;
+    font-size: 14px;
+    padding: 0;
+    text-decoration: underline;
+}
+
+.btn-link:hover {
+    color: #0052a3;
+}
