@@ -16,7 +16,9 @@ class Insumo(db.Model):
     # REMOVIDO: estoque_atual como coluna — era fonte de inconsistência.
     # O saldo agora é calculado a partir das movimentações via property.
 
-    movimentacoes = db.relationship("MovimentacaoInsumo", backref="insumo_ref", lazy="dynamic")
+    # backref removido — MovimentacaoInsumo já define insumo = relationship("Insumo")
+    # no mesmo arquivo, evitando conflito de backref duplicado
+    movimentacoes = db.relationship("MovimentacaoInsumo", lazy="dynamic")
 
     @property
     def estoque_atual(self) -> float:
@@ -24,7 +26,7 @@ class Insumo(db.Model):
         Saldo calculado em tempo real somando entradas e subtraindo saídas.
         Nunca fica divergente do histórico real.
         """
-        from models.movimentacao_insumo import MovimentacaoInsumo
+        # MovimentacaoInsumo está definida abaixo, no mesmo arquivo
         entradas = db.session.query(
             func.coalesce(func.sum(MovimentacaoInsumo.quantidade), 0.0)
         ).filter_by(insumo_id=self.id, tipo="entrada").scalar()
@@ -66,5 +68,5 @@ class MovimentacaoInsumo(db.Model):
 
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
 
-    insumo = db.relationship("Insumo")
+    insumo = db.relationship("Insumo", foreign_keys=[insumo_id])
     user = db.relationship("User")

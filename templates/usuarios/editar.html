@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<h1>Editar Usuário — {{ user.nome }}</h1>
+
+<form method="POST">
+    <input type="text" name="nome" value="{{ user.nome }}" placeholder="Nome completo" required>
+    <input type="email" name="email" value="{{ user.email }}" placeholder="E-mail" required>
+    <input type="password" name="nova_senha" placeholder="Nova senha (deixe em branco para manter)">
+    <button type="submit">Salvar</button>
+    <a href="{{ url_for('usuarios.listar') }}">Cancelar</a>
+</form>
+
+{% endblock %}

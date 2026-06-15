@@ -24,10 +24,12 @@ def create_app():
     from routes.insumos import insumos_bp
     from routes.produtos import produtos_bp
     from routes.producao import producao_bp
+    from routes.usuarios import usuarios_bp
 
     app.register_blueprint(insumos_bp)
     app.register_blueprint(produtos_bp)
     app.register_blueprint(producao_bp)
+    app.register_blueprint(usuarios_bp)
 
     @app.route("/")
     def home():

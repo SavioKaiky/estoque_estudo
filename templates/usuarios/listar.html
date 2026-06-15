@@ -1,0 +1,51 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<h1>Usuários</h1>
+
+<form method="POST">
+    <input type="text" name="nome" placeholder="Nome completo" required>
+    <input type="email" name="email" placeholder="E-mail" required>
+    <input type="password" name="senha" placeholder="Senha" required>
+    <button type="submit">Cadastrar</button>
+</form>
+
+<hr>
+
+<table>
+    <tr>
+        <th>Nome</th>
+        <th>E-mail</th>
+        <th>Status</th>
+        <th>Cadastrado em</th>
+        <th>Ações</th>
+    </tr>
+    {% for u in usuarios %}
+    <tr>
+        <td>{{ u.nome }}</td>
+        <td>{{ u.email }}</td>
+        <td>
+            {% if u.ativo %}
+                <span class="badge-ativo">✅ Ativo</span>
+            {% else %}
+                <span class="badge-inativo">🔴 Inativo</span>
+            {% endif %}
+        </td>
+        <td>{{ u.created_at.strftime('%d/%m/%Y') }}</td>
+        <td>
+            <a href="{{ url_for('usuarios.editar', user_id=u.id) }}">✏️ Editar</a>
+            &nbsp;|&nbsp;
+            <form method="POST"
+                  action="{{ url_for('usuarios.alternar', user_id=u.id) }}"
+                  style="display:inline">
+                <button type="submit" class="btn-link">
+                    {% if u.ativo %}🔴 Desativar{% else %}✅ Ativar{% endif %}
+                </button>
+            </form>
+        </td>
+    </tr>
+    {% endfor %}
+</table>
+
+{% endblock %}
