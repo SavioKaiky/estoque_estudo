@@ -1,5 +1,6 @@
 from database import db
 from datetime import datetime
+from werkzeug.security import generate_password_hash, check_password_hash
 
 
 class User(db.Model):
@@ -11,6 +12,14 @@ class User(db.Model):
     senha_hash = db.Column(db.String(256), nullable=False)
     ativo = db.Column(db.Boolean, default=True)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
+
+    def set_senha(self, senha: str) -> None:
+        """Gera e armazena o hash da senha."""
+        self.senha_hash = generate_password_hash(senha)
+
+    def checar_senha(self, senha: str) -> bool:
+        """Verifica se a senha confere com o hash armazenado."""
+        return check_password_hash(self.senha_hash, senha)
 
     def __repr__(self):
         return f"<User {self.email}>"
