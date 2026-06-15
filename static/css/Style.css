@@ -102,7 +102,7 @@ form button {
 }
 
 form button:hover {
-    background-color: #0052a3;
+    background-color: #001a33;
 }
 
 /* ---- Tabelas ---- */
@@ -148,7 +148,7 @@ ul {
     background-color: #fff;
     border-radius: 6px;
     padding: 12px 20px;
-    box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+    box-shadow: 0 1px 3px rgba(255, 255, 255, 0.08);
 }
 
 ul li {
@@ -174,15 +174,15 @@ ul li:last-child {
 }
 
 .btn-link {
-    background: none;
+    padding: 7px 16px;
+    background-color: #0066cc;
+    color: #fff;
     border: none;
-    color: #0066cc;
+    border-radius: 4px;
     cursor: pointer;
     font-size: 14px;
-    padding: 0;
-    text-decoration: underline;
 }
 
 .btn-link:hover {
-    color: #0052a3;
+    background-color: #001a33;
 }
