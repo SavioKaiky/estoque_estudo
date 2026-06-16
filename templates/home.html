@@ -4,6 +4,16 @@
 
 <h2>📦 Sistema de Estoque</h2>
 
+<div id="dashboard-root"></div>
+{% endblock %}
+ 
+{% block scripts %}
+<!-- React + Recharts via CDN -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/recharts/2.12.7/Recharts.min.js"></script>
+<script src="{{ url_for('static', filename='js/dashboard.js') }}"></script>
+
 <ul>
     <li><a href="/insumos">📥 Insumos</a></li>
     <li><a href="/insumos/historico">📊 Histórico de Insumos</a></li>

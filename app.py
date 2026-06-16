@@ -21,19 +21,18 @@ def create_app():
     with app.app_context():
         import models  # noqa: F401
 
+    from routes.dashboard import dashboard_bp
     from routes.insumos import insumos_bp
     from routes.produtos import produtos_bp
     from routes.producao import producao_bp
     from routes.usuarios import usuarios_bp
 
+    app.register_blueprint(dashboard_bp)
     app.register_blueprint(insumos_bp)
     app.register_blueprint(produtos_bp)
     app.register_blueprint(producao_bp)
     app.register_blueprint(usuarios_bp)
 
-    @app.route("/")
-    def home():
-        return render_template("home.html")
 
     return app
 
@@ -41,3 +40,4 @@ def create_app():
 if __name__ == "__main__":
     app = create_app()
     app.run(debug=True)
+    

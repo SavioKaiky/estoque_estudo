@@ -10,14 +10,9 @@ class Insumo(db.Model):
     nome = db.Column(db.String(120), nullable=False)
     unidade = db.Column(db.String(20), nullable=False)
     estoque_minimo = db.Column(db.Float, default=0)
+    tipo_armazenamento = db.Column(db.String(20),nullable=False,default="seco")
     ativo = db.Column(db.Boolean, default=True)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
-
-    # REMOVIDO: estoque_atual como coluna — era fonte de inconsistência.
-    # O saldo agora é calculado a partir das movimentações via property.
-
-    # backref removido — MovimentacaoInsumo já define insumo = relationship("Insumo")
-    # no mesmo arquivo, evitando conflito de backref duplicado
     movimentacoes = db.relationship("MovimentacaoInsumo", lazy="dynamic")
 
     @property
