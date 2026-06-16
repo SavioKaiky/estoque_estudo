@@ -10,9 +10,10 @@ class Insumo(db.Model):
     nome = db.Column(db.String(120), nullable=False)
     unidade = db.Column(db.String(20), nullable=False)
     estoque_minimo = db.Column(db.Float, default=0)
-    tipo_armazenamento = db.Column(db.String(20),nullable=False,default="seco")
     ativo = db.Column(db.Boolean, default=True)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
+
+    # backref removido — MovimentacaoInsumo já define insumo = relationship("Insumo")
     movimentacoes = db.relationship("MovimentacaoInsumo", lazy="dynamic")
 
     @property
@@ -21,7 +22,6 @@ class Insumo(db.Model):
         Saldo calculado em tempo real somando entradas e subtraindo saídas.
         Nunca fica divergente do histórico real.
         """
-        # MovimentacaoInsumo está definida abaixo, no mesmo arquivo
         entradas = db.session.query(
             func.coalesce(func.sum(MovimentacaoInsumo.quantidade), 0.0)
         ).filter_by(insumo_id=self.id, tipo="entrada").scalar()
@@ -55,10 +55,11 @@ class MovimentacaoInsumo(db.Model):
     quantidade = db.Column(db.Float)
     motivo = db.Column(db.String(100))
 
+    # nullable=True — operações do sistema (produção, ajuste) não têm usuário logado
     user_id = db.Column(
         db.Integer,
         db.ForeignKey("user.id"),
-        nullable=False
+        nullable=True
     )
 
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
