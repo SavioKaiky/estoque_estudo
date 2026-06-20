@@ -13,11 +13,7 @@ class Insumo(db.Model):
     ativo = db.Column(db.Boolean, default=True)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
 
-    # REMOVIDO: estoque_atual como coluna — era fonte de inconsistência.
-    # O saldo agora é calculado a partir das movimentações via property.
-
     # backref removido — MovimentacaoInsumo já define insumo = relationship("Insumo")
-    # no mesmo arquivo, evitando conflito de backref duplicado
     movimentacoes = db.relationship("MovimentacaoInsumo", lazy="dynamic")
 
     @property
@@ -26,7 +22,6 @@ class Insumo(db.Model):
         Saldo calculado em tempo real somando entradas e subtraindo saídas.
         Nunca fica divergente do histórico real.
         """
-        # MovimentacaoInsumo está definida abaixo, no mesmo arquivo
         entradas = db.session.query(
             func.coalesce(func.sum(MovimentacaoInsumo.quantidade), 0.0)
         ).filter_by(insumo_id=self.id, tipo="entrada").scalar()
@@ -60,10 +55,11 @@ class MovimentacaoInsumo(db.Model):
     quantidade = db.Column(db.Float)
     motivo = db.Column(db.String(100))
 
+    # nullable=True — operações do sistema (produção, ajuste) não têm usuário logado
     user_id = db.Column(
         db.Integer,
         db.ForeignKey("user.id"),
-        nullable=False
+        nullable=True
     )
 
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
